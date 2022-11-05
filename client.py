@@ -26,8 +26,12 @@ def receive():
 
 def write():
     while True:
-        pesan = f'{nickname} : {input("")}'
-        client.send(pesan.encode('ascii'))
+        inputan = input("")
+        if inputan == '/user':
+            client.send(inputan.encode('ascii'))
+        else:
+            pesan = f'{nickname} : '+ inputan
+            client.send(pesan.encode('ascii'))
 
 receive_thread = threading.Thread(target=receive)
 receive_thread.start()

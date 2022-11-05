@@ -20,6 +20,11 @@ print('Listening on port %s ...' % port)
 clients = []
 nicknames =[]
 
+def user(nick):
+    for client in clients:
+        client.send(nick.encode('ascii'))
+ 
+
 def broadcast(pesan):
     for client in clients:
         client.send(pesan)
@@ -27,8 +32,15 @@ def broadcast(pesan):
 def handle(client):
     while True:
         try:
-            pesan = client.recv(1024)
-            broadcast(pesan)
+            pesan = client.recv(1024).decode('ascii')
+            if pesan == '/user':
+                for clien in clients:
+                    clien.send('daftar user aktif = '.encode('ascii'))
+                    for nick in nicknames:
+                        daftar = nick + ' \n'
+                        clien.send(daftar.encode('ascii'))
+            else:
+                broadcast(pesan.encode('ascii'))
         except:
             index = clients.index(client)
             clients.remove(client)
