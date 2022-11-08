@@ -14,11 +14,14 @@ client.connect((ip, port))
 def receive():
     while True:
         try:
+            print('1')
             pesan = client.recv(1024).decode('ascii')
+            print('2')
             if pesan == 'NICK':
                 client.send(nickname.encode('ascii'))
             else:
                 print(pickle.loads(pesan))
+                print('3')
         except:
             print(f'erorr sodaraa!!!')
             client.close()

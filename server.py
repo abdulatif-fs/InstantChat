@@ -61,7 +61,8 @@ def receive():
         clients.append(client)
 
         print(f'nickname client: {nickname}')
-        client.send(f'terhubung kedalam server!'.encode('ascii'))
+        terhubung = pickle.dumps('anda terhubung kedalam server!')
+        client.send(f'{terhubung}'.encode('ascii'))
         broadcast(f'{nickname} join the chat!'.encode('ascii'))
         
 
