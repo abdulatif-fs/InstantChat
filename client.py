@@ -1,12 +1,12 @@
 from http import client
-from pydoc import cli
 import socket
 import select
 import sys
+import pickle
 import threading
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-nickname = input("masukan nickname anda: ")
+nickname = input("Login dengan memasukkan nickname: ")
 ip = "127.0.0.1"
 port = 8080
 client.connect((ip, port))
@@ -18,7 +18,7 @@ def receive():
             if pesan == 'NICK':
                 client.send(nickname.encode('ascii'))
             else:
-                print(pesan)
+                print(pickle.loads(pesan))
         except:
             print(f'erorr sodaraa!!!')
             client.close()
@@ -31,7 +31,8 @@ def write():
             client.send(inputan.encode('ascii'))
         else:
             pesan = f'{nickname} : '+ inputan
-            client.send(pesan.encode('ascii'))
+            dum_pesan = f'{pickle.dumps(pesan)}'
+            client.send(dum_pesan.encode('ascii'))
 
 receive_thread = threading.Thread(target=receive)
 receive_thread.start()
