@@ -2,7 +2,7 @@ from http import client
 import socket
 import select
 import sys
-import pickle
+import pick
 import threading
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -14,14 +14,13 @@ client.connect((ip, port))
 def receive():
     while True:
         try:
-            print('1')
-            pesan = client.recv(1024).decode('ascii')
-            print('2')
+            pes = client.recv(1024)
+            pesan = pick.unpack(pes)
             if pesan == 'NICK':
-                client.send(nickname.encode('ascii'))
+                client.send(pick.pack(nickname))
             else:
-                print(pickle.loads(pesan))
-                print('3')
+                print(pesan)
+                
         except:
             print(f'erorr sodaraa!!!')
             client.close()
@@ -31,11 +30,11 @@ def write():
     while True:
         inputan = input("")
         if inputan == '/user':
-            client.send(inputan.encode('ascii'))
+            client.send(pick.pack(inputan))
         else:
             pesan = f'{nickname} : '+ inputan
-            dum_pesan = f'{pickle.dumps(pesan)}'
-            client.send(dum_pesan.encode('ascii'))
+            dum_pesan = pick.pack(pesan)
+            client.send(dum_pesan)
 
 receive_thread = threading.Thread(target=receive)
 receive_thread.start()

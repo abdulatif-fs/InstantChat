@@ -2,7 +2,7 @@ from concurrent.futures import thread
 import socket
 import socketserver
 from _thread import *
-import pickle
+import pick
 import select
 import threading
 
@@ -21,30 +21,32 @@ clients = []
 nicknames =[]
 
 def broadcast(pesan):
-    # dum_pesan = pickle.dumps(pesan)
+    pes = pick.pack(pesan)
     for client in clients:
-        client.send(pesan)
+        client.send(pes)
 
 def handle(client):
     while True:
         try:
-            pesan = client.recv(1024).decode('ascii')
-            
+            pes = client.recv(1024)
+            pesan = pick.unpack(pes)
             if pesan == '/user':
+                daf = 'daftar user aktif = '
+                daf1 = pick.pack(daf)
                 for clien in clients:
-                    clien.send('daftar user aktif = '.encode('ascii'))
+                    clien.send(daf1)
                     for nick in nicknames:
                         daftar = nick + ' \n'
-                        clien.send(daftar.encode('ascii'))
+                        daftar_pack = pick.pack(daftar)
+                        clien.send(daftar_pack)
             else:
-                load_pesan = f'{pickle.loads(pesan)}'
-                broadcast(load_pesan.encode('ascii'))
+                broadcast(pesan)
         except:
             index = clients.index(client)
             clients.remove(client)
             client.close()
             nickname = nicknames[index]
-            broadcast(f'{nickname} keluar dari room! '.encode('ascii'))
+            broadcast(f'{nickname} keluar dari room! ')
             nicknames.remove(nickname)
             break
 
@@ -55,15 +57,16 @@ def receive():
         client, address = server.accept()
         print(f'{str(address)} Terhubung!')
 
-        client.send('NICK'.encode('ascii'))
-        nickname = client.recv(1024).decode('ascii')
+        client.send(pick.pack('NICK'))
+        nicknam = client.recv(1024)
+        nickname = pick.unpack(nicknam)
         nicknames.append(nickname)
         clients.append(client)
 
         print(f'nickname client: {nickname}')
-        terhubung = pickle.dumps('anda terhubung kedalam server!')
-        client.send(f'{terhubung}'.encode('ascii'))
-        broadcast(f'{nickname} join the chat!'.encode('ascii'))
+        terhubung = pick.pack('anda terhubung kedalam server!')
+        client.send(terhubung)
+        broadcast(f'{nickname} join the chat!')
         
 
         thread = threading.Thread(target=handle, args=(client,))
