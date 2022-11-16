@@ -42,6 +42,23 @@ def handle(client, nickname):
                     #     # daftar_pack = pick.pack(daftar)
                     #     clien.send(pick.pack(daftar))
                     #     print(nick)
+            elif pesan[0] == '/':
+                nama = pesan.split(' ')[0]
+                penerima = nama.split('/')[1]
+                if penerima in nicknames:
+                    a = 0
+                    for pen in nicknames:
+                        if pen == penerima:
+                            break
+                        else:
+                            a = a+1
+                    recv = clients[a]
+
+                    kirim = f'{nickname}_private : ' + pesan
+                    recv.send(pick.pack(kirim))
+                else:
+                    kirim = 'nama penerima salah!'
+                    client.send(pick.pack(kirim))
             else:
                 broadcast(pesan)
         except:

@@ -29,7 +29,7 @@ def receive():
 def write():
     while True:
         inputan = input("")
-        if inputan == '/user':
+        if inputan[0] == '/':
             client.send(pick.pack(inputan))
         else:
             pesan = f'{nickname} : '+ inputan
