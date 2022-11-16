@@ -25,20 +25,23 @@ def broadcast(pesan):
     for client in clients:
         client.send(pes)
 
-def handle(client):
+def handle(client, nickname):
     while True:
         try:
             pes = client.recv(1024)
             pesan = pick.unpack(pes)
             if pesan == '/user':
-                daf = 'daftar user aktif = '
+                daf = f'{nickname} : /user \ndaftar user aktif = '
                 daf1 = pick.pack(daf)
+                print('nickname yang terhubung = ', nicknames)
                 for clien in clients:
                     clien.send(daf1)
-                    for nick in nicknames:
-                        daftar = nick + ' \n'
-                        daftar_pack = pick.pack(daftar)
-                        clien.send(daftar_pack)
+                    clien.send(pick.pack(nicknames))
+                    # for nick in nicknames:
+                    #     daftar = '-' + nick 
+                    #     # daftar_pack = pick.pack(daftar)
+                    #     clien.send(pick.pack(daftar))
+                    #     print(nick)
             else:
                 broadcast(pesan)
         except:
@@ -64,12 +67,13 @@ def receive():
         clients.append(client)
 
         print(f'nickname client: {nickname}')
+        # print('nickname yang terhubung = ', nicknames)
         terhubung = pick.pack('anda terhubung kedalam server!')
         client.send(terhubung)
         broadcast(f'{nickname} join the chat!')
         
 
-        thread = threading.Thread(target=handle, args=(client,))
+        thread = threading.Thread(target=handle, args=(client, nickname))
         thread.start()
 
 receive()
